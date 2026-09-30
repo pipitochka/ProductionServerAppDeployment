@@ -1,0 +1,7 @@
+.env
+npm/certs/*.key
+npm/certs/*.csr
+npm/certs/*.srl
+npm/certs/*.crt
+npm/data/
+npm/letsencrypt/
