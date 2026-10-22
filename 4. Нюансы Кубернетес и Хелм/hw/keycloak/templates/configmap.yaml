@@ -1,0 +1,33 @@
+{{- if not (has .Values.mode (list "development" "production")) -}}
+{{- fail "mode must be development or production" -}}
+{{- end -}}
+{{- if and (eq .Values.mode "production") (not .Values.tls.enabled) -}}
+{{- fail "production mode requires tls.enabled=true" -}}
+{{- end -}}
+{{- if not (hasPrefix (ternary "https://" "http://" .Values.tls.enabled) .Values.hostname) -}}
+{{- fail "hostname scheme must match tls.enabled (https:// or http://)" -}}
+{{- end -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "keycloak.name" . }}-config
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+data:
+  KC_DB: postgres
+  KC_DB_URL: {{ printf "jdbc:postgresql://%s-postgresql:5432/%s" (include "keycloak.name" .) .Values.postgresql.database | quote }}
+  KC_DB_USERNAME: {{ .Values.postgresql.username | quote }}
+  KC_BOOTSTRAP_ADMIN_USERNAME: {{ .Values.auth.adminUsername | quote }}
+  KC_HOSTNAME: {{ required "hostname is required" .Values.hostname | quote }}
+  KC_HOSTNAME_STRICT: "true"
+  # This chart deliberately runs a single Keycloak replica.
+  KC_CACHE: local
+  KC_HEALTH_ENABLED: "true"
+  KC_METRICS_ENABLED: "true"
+  # Probes use the internal management port, never exposed by the Service.
+  KC_HTTP_MANAGEMENT_SCHEME: http
+  KC_HTTP_ENABLED: {{ not .Values.tls.enabled | quote }}
+  {{- if .Values.tls.enabled }}
+  KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/tls/tls.crt
+  KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/tls/tls.key
+  {{- end }}

@@ -1,0 +1,4 @@
+mode: production
+hostname: https://localhost:8443
+tls:
+  enabled: true

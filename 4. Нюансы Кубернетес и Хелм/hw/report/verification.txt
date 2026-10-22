@@ -1,0 +1,26 @@
+Keycloak production — проверка 22.10.2026
+
+Environment: prod
+PASS: trusted self-signed certificate; hostname verified; TLSv1.3 TLS_AES_256_GCM_SHA384
+PASS: OIDC discovery HTTP 200; issuer=https://localhost:8443/realms/master
+PASS: admin login HTTP 200; access token received (not printed)
+PASS: invalid password rejected with invalid_grant
+PASS: realm homework4-demo available through authenticated Admin API
+
+PostgreSQL restart:
+Pod before: 34a39b2e-e6cc-4772-805c-b3e78048e512
+Pod after:  e4f21612-7d67-4868-b03f-3a116a5c8978
+PVC before: f84e500d-a7ea-42f2-93fb-01f5359c3634
+PVC after:  f84e500d-a7ea-42f2-93fb-01f5359c3634
+
+Realms after restart:
+      name
+----------------
+ homework4-demo
+ master
+(2 rows)
+
+
+Production startup log:
+2026-10-22 14:25:00,159 INFO  [io.quarkus] (main) Keycloak 26.8.1 on JVM (powered by Quarkus 3.40.1) started in 2.394s. Listening on: https://0.0.0.0:8443. Management interface listening on http://0.0.0.0:9000.
+2026-10-22 14:25:00,159 INFO  [io.quarkus] (main) Profile prod activated.
