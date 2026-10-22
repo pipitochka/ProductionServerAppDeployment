@@ -1,0 +1,13 @@
+replicaCount: 1
+image:
+  repository: nginx
+  tag: "1.27.4"
+
+postgresql:
+  auth:
+    username: "order_user"
+    password: "OrderSecretPassword123"
+    database: "orders_db"
+  primary:
+    persistence:
+      enabled: false

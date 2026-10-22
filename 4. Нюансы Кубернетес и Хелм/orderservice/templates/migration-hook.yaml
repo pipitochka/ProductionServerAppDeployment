@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-migration
+  annotations:
+    "helm.sh/hook": post-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "1"
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ .Release.Name }}-postgresql -p 5432 -U {{ .Values.postgresql.auth.username }}; do
+                echo "Ждем, пока поднимается Посгтес..."
+                sleep 2
+              done
+      containers:
+        - name: run-migration
+          image: postgres:16-alpine
+          env:
+            - name: PGPASSWORD
+              value: {{ .Values.postgresql.auth.password | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Накатываем миграцию"
+              psql -h {{ .Release.Name }}-postgresql -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }} <<EOF
+              CREATE TABLE IF NOT EXISTS orders (
+                  id SERIAL PRIMARY KEY,
+                  title VARCHAR(100) NOT NULL,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+              );
+              INSERT INTO orders (title) VALUES ('Тестовый заказ');
+              EOF
+              echo "Миграция успешно накатана!"

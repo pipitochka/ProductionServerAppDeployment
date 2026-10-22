@@ -1,0 +1,4 @@
+replicaCount: 1
+content:
+  title: "DEV CLUSTER"
+  message: "Just for testing"

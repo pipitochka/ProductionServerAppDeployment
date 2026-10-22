@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-test-select
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  restartPolicy: Never
+  containers:
+    - name: check-db-data
+      image: postgres:16-alpine
+      env:
+        - name: PGPASSWORD
+          value: {{ .Values.postgresql.auth.password | quote }}
+      command:
+        - sh
+        - -c
+        - |
+          echo "Проверяем наличие данных через SELECT..."
+          COUNT=$(psql -h {{ .Release.Name }}-postgresql -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }} -t -A -c "SELECT count(*) FROM orders;")
+          echo "Количество найденных заказов: $COUNT"
+          if [ "$COUNT" -ge 1 ]; then
+            echo "ТЕСТ ПРОЙДЕН: Таблица создана и заполнена!"
+            exit 0
+          else
+            echo "ОШИБКА: Заказов не найдено!"
+            exit 1
+          fi

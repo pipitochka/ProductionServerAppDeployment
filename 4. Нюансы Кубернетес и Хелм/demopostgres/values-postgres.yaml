@@ -1,0 +1,19 @@
+auth:
+  username: "shop_user"
+  password: "topsecret"
+  database: "shop_db"
+  postgresPassword: "supertopsecret"
+
+primary:
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClass: "standard"
+
+  resources:
+    requests:
+      cpu: 150m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

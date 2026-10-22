@@ -1,0 +1,14 @@
+replicaCount: 2
+
+image:
+  repository: nginx
+  tag: "1.27.4"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+content:
+  title: "Hello from Helm!"
+  message: "This text came from values.yaml"

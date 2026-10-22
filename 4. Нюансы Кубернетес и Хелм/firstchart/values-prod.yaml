@@ -1,0 +1,4 @@
+replicaCount: 5
+content:
+  title: "PROD CLUSTER"
+  message: "Highload time"

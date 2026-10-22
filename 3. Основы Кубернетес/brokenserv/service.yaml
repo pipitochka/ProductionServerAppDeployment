@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: web-serv
+    app: web
   ports:
     - port: 80
       targetPort: 80

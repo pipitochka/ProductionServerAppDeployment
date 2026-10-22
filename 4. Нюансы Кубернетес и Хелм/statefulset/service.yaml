@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stateful-service
+  namespace: k8s-lab
+spec:
+  clusterIP: None
+  selector:
+    app: stateful-demo
+  ports:
+    - name: http
+      port: 80
