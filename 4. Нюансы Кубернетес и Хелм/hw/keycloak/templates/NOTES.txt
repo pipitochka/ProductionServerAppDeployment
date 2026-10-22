@@ -1,0 +1,13 @@
+Keycloak runs in {{ .Values.mode }} mode with PostgreSQL and a persistent volume.
+
+Open a separate terminal and run:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "keycloak.name" . }} {{ ternary "8443:8443" "8080:8080" .Values.tls.enabled }}
+
+Admin console: {{ .Values.hostname }}/admin/
+Admin username: {{ .Values.auth.adminUsername }}
+Password: key admin-password in Secret {{ include "keycloak.credentials" . }}.
+
+Test:
+  helm test {{ .Release.Name }} -n {{ .Release.Namespace }} --logs
+
+The PostgreSQL PVC is retained on uninstall. Keep its credentials Secret as well.

@@ -1,0 +1,45 @@
+# Production mode with HTTPS is the default. Use ../values-dev.yaml for HTTP.
+mode: production
+hostname: https://localhost:8443
+
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "26.8.1"
+  pullPolicy: IfNotPresent
+
+auth:
+  adminUsername: admin
+  # Empty means <release>-credentials. Keys: admin-password, database-password.
+  existingSecret: ""
+
+tls:
+  enabled: true
+  # Empty means <release>-tls. Keys: tls.crt, tls.key.
+  existingSecret: ""
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "2"
+    memory: 1Gi
+
+postgresql:
+  image: postgres:17.6-alpine
+  database: keycloak
+  username: keycloak
+  persistence:
+    size: 1Gi
+    # Empty uses the cluster's default StorageClass (standard in kind).
+    storageClass: ""
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+
+test:
+  image: curlimages/curl:8.16.0

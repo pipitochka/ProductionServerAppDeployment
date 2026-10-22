@@ -1,0 +1,7 @@
+apiVersion: v2
+name: keycloak
+description: Keycloak with PostgreSQL persistence and optional HTTPS for homework 4
+type: application
+version: 0.1.0
+appVersion: "26.8.1"
+kubeVersion: ">=1.25.0-0"
